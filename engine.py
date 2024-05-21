@@ -1,6 +1,6 @@
 from scapy.all import *
 from features.generator import generate_flow
-from call import call
+import multiprocessing
 
 flow = {}
 i = 0
@@ -11,5 +11,9 @@ def engine(packet):
     generate_flow(packet, i, flow)
 
 
+def sniff_interface():
+    sniff(prn=engine)
 
-sniff(prn=engine)
+
+sniff_interface()
+
