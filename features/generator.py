@@ -5,12 +5,14 @@ from features.flow.packet_direction import packet_direction
 from features.flow.flow_session import end_flow
 from helper.timeout import activity_timeout, inactivity_timeout
 from helper.match import protocol_match, ip_match, port_match
+from features.calculate.segments import packet_segment
 from features.calculate.length import get_length, get_header_length
 
 
 def generate_flow(packet, i, flow):
     time_array, flags, forward_packet_flag, backward_packet_flag = [], [], [], []
     back_time, for_time, for_len, back_len, for_ihl, back_ihl = [], [], [], [], [], []
+    for_segment, back_segment = [], []
 
     if 'IP' in packet:
         protocol = get_protocol(packet)
@@ -28,18 +30,21 @@ def generate_flow(packet, i, flow):
                        'forward_packet_flag': forward_packet_flag, 'backward_packet_flag': backward_packet_flag,
                        'timestamp': time_array, 'forward_packet_time': for_time, 'backward_packet_time': back_time,
                        'forward_packet_length': for_len, 'backward_packet_length': back_len,
-                       'forward_packet_ihl': for_ihl, 'backward_packet_ihl': back_ihl}
+                       'forward_packet_ihl': for_ihl, 'backward_packet_ihl': back_ihl, 'for_segment': for_segment,
+                       'back_segment': back_segment}
 
             if packet_direction(source, destination):
                 flow[i]['forward_packet_flag'].append(deconstruct(packet))
                 flow[i]['forward_packet_time'].append(timestamp(packet))
                 flow[i]['forward_packet_length'].append(get_length(packet))
                 flow[i]['forward_packet_ihl'].append(get_header_length(packet))
+                flow[i]['for_segment'].append(packet_segment(packet, protocol))
             else:
                 flow[i]['backward_packet_flag'].append(deconstruct(packet))
                 flow[i]['backward_packet_time'].append(timestamp(packet))
                 flow[i]['backward_packet_length'].append(get_length(packet))
                 flow[i]['backward_packet_ihl'].append(get_header_length(packet))
+                flow[i]['for_segment'].append(packet_segment(packet, protocol))
 
             if end_flow(deconstruct(packet)):
                 flow[i]['isComplete'] = True
@@ -68,11 +73,14 @@ def generate_flow(packet, i, flow):
                             item['forward_packet_time'].append(timestamp(packet))
                             item['forward_packet_length'].append(get_length(packet))
                             item['forward_packet_ihl'].append(get_header_length(packet))
+                            item['for_segment'].append(packet_segment(packet, protocol))
+
                         else:
                             item['backward_packet_flag'].append(deconstruct(packet))
                             item['backward_packet_time'].append(timestamp(packet))
                             item['backward_packet_length'].append(get_length(packet))
                             item['backward_packet_ihl'].append(get_header_length(packet))
+                            item['for_segment'].append(packet_segment(packet, protocol))
 
                         foundanItem = True
 
@@ -91,18 +99,22 @@ def generate_flow(packet, i, flow):
                            'forward_packet_flag': forward_packet_flag, 'backward_packet_flag': backward_packet_flag,
                            'timestamp': time_array, 'forward_packet_time': for_time, 'backward_packet_time': back_time,
                            'forward_packet_length': for_len, 'backward_packet_length': back_len,
-                           'forward_packet_ihl': for_ihl, 'backward_packet_ihl': back_ihl}
+                           'forward_packet_ihl': for_ihl, 'backward_packet_ihl': back_ihl, 'for_segment': for_segment,
+                           'back_segment': back_segment}
 
                 if packet_direction(source, destination):
                     flow[i]['forward_packet_flag'].append(deconstruct(packet))
                     flow[i]['forward_packet_time'].append(timestamp(packet))
                     flow[i]['forward_packet_length'].append(get_length(packet))
                     flow[i]['forward_packet_ihl'].append(get_header_length(packet))
+                    flow[i]['for_segment'].append(packet_segment(packet, protocol))
+
                 else:
                     flow[i]['backward_packet_flag'].append(deconstruct(packet))
                     flow[i]['backward_packet_time'].append(timestamp(packet))
                     flow[i]['backward_packet_length'].append(get_length(packet))
                     flow[i]['backward_packet_ihl'].append(get_header_length(packet))
+                    flow[i]['for_segment'].append(packet_segment(packet, protocol))
 
                 flow[i]['timestamp'].append(timestamp(packet))
 
