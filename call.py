@@ -1,5 +1,7 @@
 from scapy.all import *
 from features.generator import generate_flow
+from features.pipeline import calculate_features
+
 import multiprocessing
 
 flow = {}
@@ -22,8 +24,8 @@ def packet_sniffer(queue):
 def packet_consumer(queue):
     while True:
         thing = queue.get()
-
-        print("scannable", thing)
+        calculate_features(thing)
+        # print("scannable", thing)
 
 
 if __name__ == "__main__":

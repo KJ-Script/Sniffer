@@ -7,6 +7,16 @@ def iat_mean(iat_array):
     return mean
 
 
+def mean(array):
+    return np.mean(array)
+
+
+def concatenated_mean(for_array, back_array):
+    iat_array = np.concatenate(for_array, back_array)
+    mean = np.mean(iat_array)
+    return mean
+
+
 def iat_std(for_array, back_array):
     iat_array = np.concatenate(for_array, back_array)
     sorted_array = np.sort(iat_array)
