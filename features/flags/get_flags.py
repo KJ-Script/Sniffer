@@ -9,6 +9,7 @@ def flag_count(array, flag):
     count = 0
     for flag_array in array:
         for item in flag_array:
-            if item == flag:
-                count += 1
+            if item is not None:
+                if item == flag:
+                    count += 1
     return count

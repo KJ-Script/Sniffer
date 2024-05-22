@@ -1,6 +1,7 @@
 from scapy.all import *
 from features.generator import generate_flow
 from features.pipeline import calculate_features
+from  features.pipeline import scan_input
 
 import multiprocessing
 
@@ -24,8 +25,11 @@ def packet_sniffer(queue):
 def packet_consumer(queue):
     while True:
         thing = queue.get()
-        calculate_features(thing)
-        # print("scannable", thing)
+        if thing is not None:
+            result, column_mapping = calculate_features(thing)
+            scan_input(result, column_mapping)
+            print("Features", result)
+            # print("Predictions", prediction)
 
 
 if __name__ == "__main__":

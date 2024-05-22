@@ -83,7 +83,6 @@ def generate_flow(packet, i, flow):
                             item['for_segment'].append(packet_segment(packet, protocol))
 
                         foundanItem = True
-
                         break
                 else:
                     if inactivity_timeout(timestamp(packet), item['timestamp'][-1]):
