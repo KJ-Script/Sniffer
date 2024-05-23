@@ -1,8 +1,6 @@
 from scapy.all import *
 from features.generator import generate_flow
-from features.pipeline import calculate_features
-from  features.pipeline import scan_input
-
+from features.pipeline import calculate_features, scan_input, classify_prediction
 import multiprocessing
 
 flow = {}
@@ -27,9 +25,9 @@ def packet_consumer(queue):
         thing = queue.get()
         if thing is not None:
             result, column_mapping = calculate_features(thing)
-            scan_input(result, column_mapping)
-            print("Features", result)
-            # print("Predictions", prediction)
+            scan_result = scan_input(result, column_mapping)
+            prediction = classify_prediction(scan_result)
+            print("Features", prediction)
 
 
 if __name__ == "__main__":

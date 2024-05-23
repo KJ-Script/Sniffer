@@ -70,9 +70,20 @@ def calculate_features(flow):
         print("Gathering flow...")
 
 
+def classify_prediction(predictions):
+    for prediction in predictions:
+        if prediction[0] == 1:
+            return "Benign"
+        elif prediction[1] == 1:
+            return "DDOS_GE"
+        elif prediction[2] == 1:
+            return "DDOS_SL"
+
+
 def scan_input(input_data, mapping_check):
     model = tf.keras.models.load_model("../model/FFP_0.keras")
     df = pd.DataFrame([input_data])
     check = df[list(mapping_check.values())].values
     predictions = model.predict(check)
     print("predictions", predictions)
+    return predictions
