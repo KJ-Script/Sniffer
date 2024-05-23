@@ -1,6 +1,7 @@
 from scapy.all import *
 from features.generator import generate_flow
 from features.pipeline import calculate_features, scan_input, classify_prediction
+from helper.call import send_model_prediction
 import multiprocessing
 
 flow = {}
@@ -17,6 +18,7 @@ def engine(packet, queue):
 def packet_sniffer(queue):
     def sniff_callback(packet):
         engine(packet, queue)
+
     sniff(prn=sniff_callback)
 
 
@@ -28,6 +30,7 @@ def packet_consumer(queue):
             scan_result = scan_input(result, column_mapping)
             prediction = classify_prediction(scan_result)
             print("Features", prediction)
+            send_model_prediction(prediction, thing)
 
 
 if __name__ == "__main__":

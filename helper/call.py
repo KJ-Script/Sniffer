@@ -1,13 +1,15 @@
 import requests
 
 
-def send_data(result, attack_type, packet_list):
-    url = 'https://example.com/api/endpoint'
+def send_model_prediction(attack_type, packet_list):
+    url = 'https://localhost:3000/api/flow'
 
     data = {
-        'key1': 'value1',
-        'key2': 'value2'
+        "Flow": packet_list,  # this is a python dictionary - js object
+        "Attack_type": attack_type,
+        "Mechanism": "Model"
     }
+    print("Data", data)
     response = requests.post(url, json=data)
 
     if response.status_code == 200:
