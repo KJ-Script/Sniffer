@@ -1,5 +1,6 @@
 import socket
 
+
 def get_ip_address():
     try:
         ip_address = socket.gethostbyname(socket.gethostname())

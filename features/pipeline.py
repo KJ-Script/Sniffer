@@ -63,7 +63,7 @@ def calculate_features(flow):
         }
 
         renamed_data = {column_mapping[k]: v for k, v in to_model.items()}
-        print(renamed_data)
+        print(renamed_data, "-----", column_mapping)
         return renamed_data, column_mapping
 
     else:
@@ -78,7 +78,6 @@ def classify_prediction(predictions):
             return "DDOS_GE"
         elif prediction[2] == 1:
             return "DDOS_SL"
-
 
 def scan_input(input_data, mapping_check):
     model = tf.keras.models.load_model("../model/FFP_0.keras")
