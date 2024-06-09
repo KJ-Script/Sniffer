@@ -10,6 +10,7 @@ from features.calculate.length import get_length, get_header_length
 
 
 def generate_flow(packet, i, flow):
+
     time_array, flags, forward_packet_flag, backward_packet_flag = [], [], [], []
     back_time, for_time, for_len, back_len, for_ihl, back_ihl = [], [], [], [], [], []
     packet_dir, packet_ihl, packet_seg = [], [], []
@@ -54,9 +55,11 @@ def generate_flow(packet, i, flow):
                 flow[i]['packet_ihl'].append(get_header_length(packet))
                 flow[i]['packet_seg'].append(packet_segment(packet, protocol))
 
+            print("first flo----------", flow[i])
             if end_flow(deconstruct(packet)):
                 flow[i]['isComplete'] = True
-                print("done flag")
+
+                print("done flag", flow[i])
                 return flow[i]
 
         else:
@@ -66,9 +69,10 @@ def generate_flow(packet, i, flow):
                 if protocol_match(protocol, item) and ip_match(source, destination, item) and port_match(sport, dport,
                                                                                                          item) and not \
                         item['isComplete']:
+                    # activity timeout
                     if activity_timeout(timestamp(packet), item['timestamp'][0]):
+                        print("activity")
                         item['isComplete'] = True
-                        print("done activity")
                         return item
 
                     else:
@@ -97,11 +101,13 @@ def generate_flow(packet, i, flow):
                             item['packet_seg'].append(packet_segment(packet, protocol))
 
                         foundanItem = True
+                        print('found item ----------', item)
                         break
                 else:
+                    # inactivity timeout
                     if inactivity_timeout(timestamp(packet), item['timestamp'][-1]):
+                        print("inactivity")
                         item['isComplete'] = True
-                        print("done inactivity")
                         return item
 
             if not foundanItem:
@@ -138,7 +144,9 @@ def generate_flow(packet, i, flow):
 
                 flow[i]['timestamp'].append(timestamp(packet))
 
+                print("added flo----------", flow[i])
+
                 if end_flow(deconstruct(packet)):
+                    # Flag finish
                     flow[i]['isComplete'] = True
-                    print("done flag")
                     return flow[i]

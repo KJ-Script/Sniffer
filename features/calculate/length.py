@@ -1,9 +1,11 @@
 def get_length(packet):
-    return packet['IP'].len
+    if packet.haslayer('IP'):
+        return packet['IP'].len
 
 
 def get_header_length(packet):
-    return packet['IP'].ihl * 4
+    if packet.haslayer('IP'):
+        return packet['IP'].ihl * 4
 
 
 def for_packet_std(item):

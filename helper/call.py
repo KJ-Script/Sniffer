@@ -1,30 +1,76 @@
 import requests
-
+import time
 
 # Function to send model prediction
-def send_model_prediction(attack_type, packet_list, guard):
-    url = 'http://192.168.188.100:4000/api/flows'
-    access_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjYxNTJjODQ5YmFiMzVmYjZkYTljZjUiLCJmaXJzdE5hbWUiOiJOYXRhbiIsImxhc3ROYW1lIjoiTWVrZWJpYiIsImVtYWlsIjoiZ2ZAZ21haWwuY29tIiwiaWF0IjoxNzE3NjU0MzYwLCJleHAiOjE3MTc5MTM1NjB9.CkNU5-F6F12OSRn7dyNchulPRf9KN79FfucgRb6dQ9E'
+ip = '192.168.188.104'
 
+
+def send_prediction(attack_type, packet_list, guard, token):
+    url = f'http://{ip}:4000/api/blacklist'
+    access_token = token
     session = requests.Session()
     session.cookies.set('accessToken', access_token)
-
     data = {
         "Flow": packet_list,
-        "Attack_type": attack_type,
-        "Mechanism": guard
+        "attack_type": attack_type,
+        "mechanism": guard,
+        "time": time.time()
     }
+
     print("Data", data)
 
     response = session.post(url, json=data)
+    print(response.status_code)
 
     if response.status_code == 200:
         print("POST request successful!")
-        print("Response _____________________________", response.json())
+        print("Response: ", response.json())
     else:
         print("POST request failed!")
         print(f"Status code: {response.status_code}")
         print(f"Response: {response.text}")
 
 
-# Example call to the function
+def auth_call(email, password):
+    url = f'http://{ip}:4000/api/auth/login'
+
+    account = {
+        'email': email,
+        'password': password,
+    }
+
+    response = requests.post(url, json=account)
+
+    if response.status_code == 200:
+        token = response.json()
+        print(token['accessToken'])
+        return token['accessToken']
+    else:
+        print(f"error encountered: {response.status_code}")
+        print(response)
+        return None
+
+
+def send_log(packet_list, token):
+    url = f'http://{ip}:4000/api/flows'
+    access_token = token
+    session = requests.Session()
+    session.cookies.set('accessToken', access_token)
+
+    data = {
+        "Flow": packet_list,
+        "time": time.time()
+    }
+
+    print("Data", data)
+
+    response = session.post(url, json=data)
+    print(response.status_code)
+
+    if response.status_code == 200:
+        print("POST request for log successful!")
+        print("Response: ", response.json())
+    else:
+        print("POST request for log failed!")
+        print(f"Status code: {response.status_code}")
+        print(f"Response: {response.text}")

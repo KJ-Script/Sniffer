@@ -2,21 +2,29 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 from event.event_handlers import open_webpage
 from pain import open_box
+from helper.call import auth_call
+import tkinter.messagebox
 
 
-# def open_webpage():
-#     webbrowser.open("https://google.com")
 def on_enter(event):
     link_button.configure(text_color='Indigo')
 
 
 def on_leave(event):
-    link_button.configure(text_color='black', )
+    link_button.configure(text_color='black')
 
 
 def create():
-    app.destroy()
-    open_box()
+    email = email_entry.get()
+    password = pass_entry.get()
+    token = auth_call(email, password)
+    if token is not None:
+        print("testing")
+        app.destroy()
+        open_box(token)
+        app.quit()
+    else:
+        tkinter.messagebox.showerror("Login Error", "Authentication failed, Try again please")
 
 
 ctk.set_appearance_mode('dark')
@@ -33,13 +41,13 @@ left_frame = ctk.CTkFrame(app, width=400, height=800)
 left_frame.grid(row=0, column=0, sticky="nsew")
 
 background_image = Image.open("assets/dragon.jpg")
-background_image = background_image.resize((400, 800))
-bg_image = ImageTk.PhotoImage(background_image)
+# background_image = background_image.resize((400, 800))
+# bg_image = ImageTk.PhotoImage(background_image)
 
-
+prc_image = ctk.CTkImage(background_image, background_image, (400, 800))
 bg_label = ctk.CTkLabel(left_frame,
                         text="",
-                        image=bg_image)
+                        image=prc_image)
 
 bg_label.place(x=0, y=0,
                relwidth=1,
@@ -98,7 +106,7 @@ login_button = ctk.CTkButton(right_frame,
                              corner_radius=10,
                              fg_color='Indigo',
                              font=outfit_small,
-                             command=create,
+                             command=create,  # Pass the function reference without parentheses
                              hover=False)
 login_button.pack(anchor='w', padx=(60, 0), pady=(40, 0))
 
@@ -113,7 +121,5 @@ link_button.pack(anchor='w', padx=(100, 0), pady=(0, 0))
 
 link_button.bind("<Enter>", on_enter)
 link_button.bind("<Leave>", on_leave)
-
-
 
 app.mainloop()

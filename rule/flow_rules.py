@@ -1,6 +1,6 @@
 from features.flow.packet_direction import packet_direction
 from constants import AVERAGE_PACKET_COUNT
-from helper.call import send_model_prediction
+from helper.call import send_prediction
 
 
 def syn_attack(flow):
@@ -26,7 +26,7 @@ def syn_attack(flow):
 
         if syn_flood or ack_flood:
             print("Suspected syn flood attack")
-            send_model_prediction("ACK_FLOOD", flow, "RULE_ENGINE")
+            send_prediction("ACK_FLOOD", flow, "RULE_ENGINE")
             return True
         else:
             return False
@@ -34,9 +34,9 @@ def syn_attack(flow):
 
 def icmp_flood(flow):
     if flow['protocol'] == 'ICMP':
-        if len(flow['flags']) > AVERAGE_PACKET_COUNT:
+        if len(flow['timestamp']) > AVERAGE_PACKET_COUNT:
             print("Suspected ICMP flood attack")
-            send_model_prediction("ICMP_FLOOD", flow, "RULE_ENGINE")
+            send_prediction("ICMP_FLOOD", flow, "RULE_ENGINE")
             return True
     else:
         return False

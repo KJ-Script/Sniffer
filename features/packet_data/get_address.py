@@ -1,3 +1,4 @@
+from scapy.layers.inet import IP, TCP, UDP, ICMP
 def ip_address(packet):
     if 'IP' in packet:
         source = packet['IP'].src
@@ -17,11 +18,12 @@ def port(packet, protocol):
 
 
 def get_protocol(packet):
-    if packet.haslayer('TCP'):
+    if packet.haslayer(TCP):
         return 'TCP'
-    elif packet.haslayer('UDP'):
+    elif packet.haslayer(UDP):
         return 'UDP'
-    elif packet.haslayer('ICMP'):
+    elif packet.haslayer(ICMP):
+        print("icmp detected")
         return 'ICMP'
     else:
         print('Unsupported protocol found')
