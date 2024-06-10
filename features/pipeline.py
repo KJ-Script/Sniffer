@@ -67,7 +67,7 @@ def calculate_features(flow):
         return renamed_data, column_mapping
 
     else:
-        print("Gathering flow...")
+        print("still gathering flow...")
 
 
 def classify_prediction(predictions):
@@ -78,16 +78,6 @@ def classify_prediction(predictions):
             return "DDOS_GE"
         elif prediction[2] == 1:
             return "DDOS_SL"
-
-
-# def scan_input(input_data, mapping_check):
-#     model = tf.keras.models.load_model("../model/FFP_0.keras")
-#     df = pd.DataFrame([input_data])
-#     check = df[list(mapping_check.values())].values
-#     predictions = model.predict(check)
-#     print("predictions", predictions)
-#     return predictions
-
 
 def scan_input(input_data, mapping_check):
     model = tf.keras.models.load_model("../model/FFP_0.keras")

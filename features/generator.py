@@ -55,7 +55,6 @@ def generate_flow(packet, i, flow):
                 flow[i]['packet_ihl'].append(get_header_length(packet))
                 flow[i]['packet_seg'].append(packet_segment(packet, protocol))
 
-            print("first flo----------", flow[i])
             if end_flow(deconstruct(packet)):
                 flow[i]['isComplete'] = True
 
@@ -101,7 +100,6 @@ def generate_flow(packet, i, flow):
                             item['packet_seg'].append(packet_segment(packet, protocol))
 
                         foundanItem = True
-                        print('found item ----------', item)
                         break
                 else:
                     # inactivity timeout
@@ -143,8 +141,6 @@ def generate_flow(packet, i, flow):
                     flow[i]['packet_seg'].append(packet_segment(packet, protocol))
 
                 flow[i]['timestamp'].append(timestamp(packet))
-
-                print("added flo----------", flow[i])
 
                 if end_flow(deconstruct(packet)):
                     # Flag finish
