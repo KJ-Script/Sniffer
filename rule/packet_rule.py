@@ -2,11 +2,13 @@ from helper.call import send_prediction
 from constants import THRESH_HOLD_COUNT, THRESH_HOLD_SECONDS
 from features.packet_data.packet_bundle import packet_obj
 from collections import defaultdict
+from helper.ip_address import get_ip_address
 import time
+from scapy.layers.inet import IP, TCP, UDP, ICMP
 from scapy.all import *
 
-# HOME_NET = get_ip_address()
-HOME_NET = '192.168.188.100'
+HOME_NET = get_ip_address()
+# HOME_NET = '192.168.188.100'
 
 syn_count = defaultdict(int)
 syn_reset_time = defaultdict(float)
@@ -37,18 +39,24 @@ def check_black_list(array, item):
 def syn_flood(packet, token):
     if packet.haslayer('IP') and packet.haslayer('TCP'):
         tcp_layer = packet.getlayer("TCP")
-        if packet['IP'].dst in HOME_NET and tcp_layer.flags == 'S':
+        print("syn flood tester: ", syn_count[packet[IP].dst], " : ", syn_reset_time[packet[IP].dst])
+        print("tf is this shit: ", packet['IP'].dst)
+        if packet['IP'].dst in HOME_NET  and tcp_layer.flags == 'S':
             current_time = time.time()
             dst_ip = packet['IP'].dst
+            print("syn flood tester in home net: ", syn_count[packet[IP].dst], " : ", syn_reset_time[packet[IP].dst])
 
             if current_time - syn_reset_time[dst_ip] > THRESH_HOLD_SECONDS:
                 syn_count[dst_ip] = 0
                 syn_reset_time[dst_ip] = current_time
 
             syn_count[dst_ip] += 1
+            print(syn_count[dst_ip], " : ", THRESH_HOLD_COUNT)
+
             if syn_count[dst_ip] > THRESH_HOLD_COUNT:
                 black_listed_ip.append(packet['IP'].src)
                 print(f"possible syn dos attack from {packet['IP'].src} on {dst_ip}")
+                print( syn_count[dst_ip], " : ",THRESH_HOLD_COUNT)
                 rule_result = 'syn_flood'
                 bundle = packet_obj(packet)
                 send_prediction(rule_result, bundle, 'rule', token)
@@ -173,7 +181,8 @@ def attack_test(packet, token):
 
 
 def check_attack(packet, token):
+    print("checking........................................................................................................")
     syn_flood(packet, token)
-    ack_flood(packet, token)
-    rst_flood(packet, token)
-    detect_icmp_flood(packet, token)
+    # ack_flood(packet, token)
+    # rst_flood(packet, token)
+    # detect_icmp_flood(packet, token)

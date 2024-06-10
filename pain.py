@@ -6,9 +6,26 @@ from features.pipeline import calculate_features, scan_input, classify_predictio
 from rule.packet_rule import check_attack
 from helper.call import send_prediction, send_log
 import time
+from collections import defaultdict
+
 
 flow = {}
 i = 0
+
+# syn_count = defaultdict(int)
+# syn_reset_time = defaultdict(float)
+#
+# ack_count = defaultdict(int)
+# ack_reset_time = defaultdict(float)
+#
+# rst_count = defaultdict(int)
+# rst_reset_time = defaultdict(float)
+#
+# fin_count = defaultdict(int)
+# fin_reset_time = defaultdict(float)
+#
+# icmp_count = defaultdict(int)
+# last_reset_time = defaultdict(float)
 
 
 def engine(packet, queue, token):
@@ -50,8 +67,8 @@ def packet_consumer(queue, token):
             if prediction is None:
                 prediction = "Conflicted"
                 send_prediction(prediction, packet_list, guard, token)
-            elif prediction == 'Benign':
-                print("flow safe")
+            # elif prediction == 'Benign':
+            #     print("flow safe")
             else:
                 send_prediction(prediction, packet_list, guard, token)
 

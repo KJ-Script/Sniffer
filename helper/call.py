@@ -2,8 +2,9 @@ import requests
 import time
 
 # Function to send model prediction
-ip = '192.168.188.102'
-# ip = '127.0.0.1'
+# ip = '192.168.188.102'
+ip = '127.0.0.1'
+
 
 def send_prediction(attack_type, packet_list, guard, token):
     url = f'http://{ip}:4000/api/blacklist'
@@ -16,8 +17,6 @@ def send_prediction(attack_type, packet_list, guard, token):
         "mechanism": guard,
         "time": time.time()
     }
-
-    print("Data", data)
 
     response = session.post(url, json=data)
     print(response.status_code)
