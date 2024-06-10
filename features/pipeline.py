@@ -79,6 +79,7 @@ def classify_prediction(predictions):
         elif prediction[2] == 1:
             return "DDOS_SL"
 
+
 def scan_input(input_data, mapping_check):
     model = tf.keras.models.load_model("../model/FFP_0.keras")
     df = pd.DataFrame([input_data])
