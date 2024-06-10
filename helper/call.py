@@ -2,8 +2,8 @@ import requests
 import time
 
 # Function to send model prediction
-ip = '192.168.188.104'
-
+ip = '192.168.188.102'
+# ip = '127.0.0.1'
 
 def send_prediction(attack_type, packet_list, guard, token):
     url = f'http://{ip}:4000/api/blacklist'
@@ -52,6 +52,7 @@ def auth_call(email, password):
 
 
 def send_log(packet_list, token):
+    print("Sending logs here")
     url = f'http://{ip}:4000/api/flows'
     access_token = token
     session = requests.Session()

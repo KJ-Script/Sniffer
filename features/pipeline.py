@@ -79,10 +79,29 @@ def classify_prediction(predictions):
         elif prediction[2] == 1:
             return "DDOS_SL"
 
+
+# def scan_input(input_data, mapping_check):
+#     model = tf.keras.models.load_model("../model/FFP_0.keras")
+#     df = pd.DataFrame([input_data])
+#     check = df[list(mapping_check.values())].values
+#     predictions = model.predict(check)
+#     print("predictions", predictions)
+#     return predictions
+
+
 def scan_input(input_data, mapping_check):
     model = tf.keras.models.load_model("../model/FFP_0.keras")
     df = pd.DataFrame([input_data])
+
+    for col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+
+    df.fillna(0, inplace=True)
+
     check = df[list(mapping_check.values())].values
+
+    check = check.astype(float)
+
     predictions = model.predict(check)
     print("predictions", predictions)
     return predictions

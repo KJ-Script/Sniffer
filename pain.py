@@ -3,7 +3,7 @@ import multiprocessing
 from scapy.all import *
 from features.generator import generate_flow
 from features.pipeline import calculate_features, scan_input, classify_prediction
-from rule.packet_rule import attack_test
+from rule.packet_rule import check_attack
 from helper.call import send_prediction, send_log
 from features.packet_data.packet_bundle import packet_obj
 import time
@@ -13,23 +13,25 @@ i = 0
 
 
 def engine(packet, queue, token):
-    rule_result = attack_test(packet)
-    print("rule: ", rule_result)
-
-    if rule_result != "pass" and rule_result is not None:
-        print(f"suspected {rule_result} attack")
-        bundle = packet_obj(packet)
-        print(bundle)
-        # pass token here
-        send_prediction(rule_result, bundle, 'rule', token)
-    elif rule_result == 'pass':
-        print(f"safe, {rule_result}")
-    else:
-        print("No ip found")
+    check_attack(packet, token)
+    # rule_result = attack_test(packet)
+    # print("rule: ", rule_result)
+    #
+    # if rule_result != "pass" and rule_result is not None:
+    #     print(f"suspected {rule_result} attack")
+    #     bundle = packet_obj(packet)
+    #     print(bundle)
+    #     # pass token here
+    #     send_prediction(rule_result, bundle, 'rule', token)
+    # elif rule_result == 'pass':
+    #     print(f"safe, {rule_result}")
+    # else:
+    #     print("No ip found")
     global i
     item = generate_flow(packet, i, flow)
     if item is not None:
         i += 1
+        print("sending general log", item)
         send_log(item, token)
         queue.put(item)
 
@@ -62,8 +64,11 @@ def packet_consumer(queue, token):
             }
             if prediction is None:
                 prediction = "Conflicted"
-            send_prediction(prediction, packet_list, guard, token)
-
+                send_prediction(prediction, packet_list, guard, token)
+            elif prediction == 'Benign':
+                print("passing this shit")
+            else:
+                send_prediction(prediction, packet_list, guard, token)
 
 def start_sniffer_and_consumer(token):
     queue = multiprocessing.Queue()
